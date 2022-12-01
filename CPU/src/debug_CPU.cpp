@@ -20,6 +20,7 @@ int dump_CPU(CPU_info *cpu)
         fprintf(cpu->log_file, "%d\t", cpu->code[ip]);        
 
     fprintf(cpu->log_file, "\n");
+    // fclose(cpu->log_file);
 
     return 0;
 }

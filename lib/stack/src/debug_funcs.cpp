@@ -103,7 +103,7 @@ const char *stackStrError(Stack *stk)
 //todo printElementType
 static void printElement(Stack *stk, int index, FILE *output)
 {
-   fprintf(output, "\t*[%d] = %g\n", index, stk->data[index]); 
+   fprintf(output, "\t*[%d] = %d\n", index, stk->data[index]); 
 
 }
 

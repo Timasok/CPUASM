@@ -70,8 +70,8 @@
 
 #define OUT(cpuPtr, element)                                                       \
                     do {                                                           \
-                        fprintf(cpuPtr->log_file, "OUT: = %g", element);           \
-                        printf("\e[0;32m\nOUT: = %g\e[0m\n", element);             \
+                        fprintf(cpuPtr->log_file, "OUT: = %d", element);           \
+                        printf("\e[0;32m\nOUT: = %d\e[0m\n", element);             \
                     } while (0)
 
 #define ARITHM_DBG(operation)                                                       \
@@ -190,18 +190,23 @@ int operateArgs(CPU_info *cpu, elem_t *argPtr)
 
     int num_of_comand = cpu->code[cpu->ip - 1];
 
-    if (num_of_comand & IMMED_MASK)
+    if (num_of_comand & REG_MASK)
+    {
+        reg_idx = cpu->code[cpu->ip++];
+        argPtr  = &cpu->Reg[reg_idx];
+
+        if (num_of_comand & IMMED_MASK)
+        {
+            int sum_of_reg_and_immed_value = cpu->Reg[reg_idx] + cpu->code[cpu->ip++];
+            argPtr = &sum_of_reg_and_immed_value;
+        }
+
+    } else if (num_of_comand & IMMED_MASK)
     {   
         argPtr = &cpu->code[cpu->ip++];     
         
-    }
-    else if(num_of_comand & REG_MASK)
+    } else 
     {
-        reg_idx = cpu->code[cpu->ip++];
-        argPtr =  &cpu->Reg[reg_idx];
-
-    } else {
-
         return checkPushPopForError(cpu, CHECK_FOR_IMMED_REG);
 
     }
@@ -240,6 +245,24 @@ int operateArgs(CPU_info *cpu, elem_t *argPtr)
 int checkPushPopForError(CPU_info *cpu, Stage stage)
 {
 
+    // switch (stage)
+    // {
+    //     case CHECK_FOR_IMMED_REG:
+    //     {
+    //         if ()
+    //         CPU_ERROR_ATTEMPT_TO_POP_INTO_IMMED
+    //         CPU_ERROR_INCORRECT_POP_MASK
+    //         CPU_ERROR_INCORRECT_PUSH_MASK
+
+    //         break;
+    //     }    
+    //     case CHECK_FOR_MEM:
+    //     {
+    //         CPU_ERROR_ACCESSING_TO_EMPTY_RAM
+    //         CPU_ERROR_MASHING_RAM
+    //         break;
+    //     }
+    // }
     // PRINT_ERR("WRONG MASK: -line: %d file: %s func: %s\n",  __LINE__, __FILE__, __FUNCTION__);
 
     //     cpu->code_of_error |= CPU_ERROR_INCORRECT_PUSH_MASK;
@@ -263,7 +286,6 @@ int checkPushPopForError(CPU_info *cpu, Stage stage)
     // }
 
     // from push to RAM
-
 
     // if (cpu->RAM[tmp_arg] != 0)
     // {

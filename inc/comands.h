@@ -190,7 +190,7 @@ DEF_CMD(OUT, 7, 0 , {},
 {
     elem_t tmp;
     SINGLE_POP(cpu, &tmp);
-    OUT(cpu, tmp/1000);
+    OUT(cpu, tmp);
 
 })
 
