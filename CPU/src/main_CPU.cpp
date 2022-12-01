@@ -20,15 +20,19 @@
 
 int main(int argc, const char* argv[])
 {
-    
-    char * asm_name = "a.code";
+
+    FILE * asm_source = nullptr;
 
     if (argc == 2)
     {
-        asm_name = strdup(argv[1]);
+        asm_source = fopen(argv[1], "rb");
+
+    } else
+    {
+        asm_source = fopen("b.code", "rb");
     }
 
-    FILE * asm_source = fopen(asm_name, "rb");
+    printf("asm_source %p\n", asm_source);
 
     CPU_info cpu;
     CPU_Ctor(&cpu, asm_source);
@@ -38,7 +42,6 @@ int main(int argc, const char* argv[])
     process(&cpu);
     // printStack(&cpu->stack);
 
-    
     CPU_Dtor(&cpu);
     fcloseall();
 
