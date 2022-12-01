@@ -13,43 +13,6 @@ int closeAsmLogs()
     return EXIT_SUCCESS;
 }
 
-int pushDmp(FILE *asm_log, const double argument, const bool isRegister, const bool isMemory)
-{
-    switch (isRegister)
-    {
-        case true:  
-            if (argument == INVALID_REGISTER)
-            {
-                fprintf(asm_log, "INVALID_REGISTER_ARGUMENT\n");
-
-            } else{
-                fprintf(asm_log, "ARGUMENT: %g REGISTER: %d MEMORY: %d\n", argument, isRegister, isMemory);
-            }
-
-        case false:
-            fprintf(asm_log, "ARGUMENT: %g REGISTER: %d MEMORY: %d\n", argument, isRegister, isMemory);
-
-    }
-
-    return EXIT_SUCCESS;
-
-}
-
-int dumpCmd(FILE *asm_log, const int number_of_line, const char * cmd, const double argument, const bool hasArg)
-{
-    switch(hasArg)
-    {
-       case true:  
-                fprintf(asm_log, "line - %d comand - %s argument - %g\n", number_of_line, cmd, argument);
-                break;
-       case false:  
-                fprintf(asm_log, "line - %d comand - %s\n", number_of_line, cmd);
-                break;
-    }
-    return EXIT_SUCCESS;
-    
-}
-
 int pushDmp(FILE *asm_log, const int argument, const bool isRegister, const bool isMemory)
 {
     switch (isRegister)
@@ -85,6 +48,37 @@ int dumpCmd(FILE *asm_log, const int number_of_line, const char * cmd, const int
     }
     return EXIT_SUCCESS;
     
+}
+
+int printToListing(FILE *asm_listing, Asm_info * output, const char * string, int number_of_args)
+{
+    switch(number_of_args)
+    {
+        case 0:
+        {
+            break;
+        }
+        case 1:
+        {
+            fprintf(asm_listing, "%04x\t%02x\t  %02x\t%02x \t\t%s\n", output->ip - 2, output->code[output->ip - 2],
+                 output->code[output->ip - 1], 0, string);      
+            break;
+        }
+        case 2:
+        {
+            fprintf(asm_listing, "%04x\t%02x\t  %02x\t%02x \t\t%s\n", output->ip - 3, output->code[output->ip - 3],
+                 output->code[output->ip - 2], output->code[output->ip - 1], string);      
+            break;
+        }
+        default:
+        {
+            printf("Everything is gonna be alright!\n");
+            break;
+        }
+    }
+    
+
+    return 0;
 }
 
 int dumpAsm(Asm_info *output, const char *name_of_file, const char *name_of_func, int number_of_line)

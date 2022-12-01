@@ -9,12 +9,7 @@ if (strchr(arg_string, '[') != nullptr && strchr(arg_string, ']') != nullptr)
     {
         isMemory = true;
 
-#ifdef USING_INT
         output->code[output->ip - 1] |= MEM_MASK;
-#elif defined USING_DOUBLE
-        comand_name_transfer = output->code[output->ip - 1];
-        output->code[output->ip - 1] = comand_name_transfer |= MEM_MASK;
-#endif
 
         *strchr(arg_string, '[') = ' ';
         *strchr(arg_string, ']') = '\0';
@@ -27,12 +22,7 @@ if (strchr(arg_string, '[') != nullptr && strchr(arg_string, ']') != nullptr)
     {
         pushDmp(output->asm_log, argument, isRegister, isMemory);
 
-#ifdef USING_INT
         output->code[output->ip - 1] |= IMMED_MASK;
-#elif defined USING_DOUBLE
-        comand_name_transfer = output->code[output->ip - 1];
-        output->code[output->ip - 1] = comand_name_transfer |= IMMED_MASK;
-#endif
 
         output->code[output->ip++] = argument;
         break;
@@ -41,21 +31,38 @@ if (strchr(arg_string, '[') != nullptr && strchr(arg_string, ']') != nullptr)
 
         isRegister = true;
         char * reg_var;
-        //CRINGE
+        
+        char * reg_immed_separator = strchr(arg_string, '+');
+
+        if (reg_immed_separator != nullptr)
+        {
+            if (sscanf(reg_immed_separator + 1, " %d", &second_argument) == 1)
+            {
+                output->code[output->ip - 1] |= IMMED_MASK;
+                *reg_immed_separator = '\0';
+  
+            } else
+            {
+                fprintf(output->asm_log, "GET HIGH POPING");
+            }
+        }
+
         sscanf(arg_string, "%ms", &reg_var);
         fprintf(output->asm_log, "%s\n", reg_var);
+
         GET_REG;
 
         pushDmp(output->asm_log, argument, isRegister, isMemory);
 
-#ifdef USING_INT
         output->code[output->ip - 1] |= REG_MASK;
-#elif defined USING_DOUBLE
-        comand_name_transfer = output->code[output->ip - 1];
-        output->code[output->ip - 1] = comand_name_transfer |= REG_MASK;
-#endif
 
         output->code[output->ip++] = argument;
+
+        if (second_argument != 0)
+        {
+            output->code[output->ip++] = second_argument;
+        }
+
         break;
     }
 
@@ -104,21 +111,38 @@ if (strchr(arg_string, '[') != nullptr && strchr(arg_string, ']') != nullptr)
 
         isRegister = true;
         char * reg_var;
-        //CRINGE
+        
+        char * reg_immed_separator = strchr(arg_string, '+');
+
+        if (reg_immed_separator != nullptr)
+        {
+            if (sscanf(reg_immed_separator + 1, " %d", &second_argument) == 1)
+            {
+                output->code[output->ip - 1] |= IMMED_MASK;
+                *reg_immed_separator = '\0';
+  
+            } else
+            {
+                fprintf(output->asm_log, "GET HIGH POPING");
+            }
+        }
+
         sscanf(arg_string, "%ms", &reg_var);
         fprintf(output->asm_log, "%s\n", reg_var);
+
         GET_REG;
 
         pushDmp(output->asm_log, argument, isRegister, isMemory);
 
-#ifdef USING_INT
         output->code[output->ip - 1] |= REG_MASK;
-#elif defined USING_DOUBLE
-        comand_name_transfer = output->code[output->ip - 1];
-        output->code[output->ip - 1] = comand_name_transfer |= REG_MASK;
-#endif
 
         output->code[output->ip++] = argument;
+
+        if (second_argument != 0)
+        {
+            output->code[output->ip++] = second_argument;
+        }
+
         break;
     }
    

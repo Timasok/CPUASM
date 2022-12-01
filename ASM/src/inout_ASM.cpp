@@ -83,8 +83,11 @@ int writeAssemblerInFile(Asm_info * executable, FILE * txt_reserve)
 int asmDtor(Asm_info *executable)
 {
     ASSERT_OK(executable);
-    fcloseall();
     free(executable->code);
+    
+    fclose(executable->asm_file);
+    fclose(executable->asm_log);
+
     return EXIT_SUCCESS;
 
 }

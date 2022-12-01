@@ -33,13 +33,13 @@ int dump_CMD_CPU(int ip, int CMD, CPU_info *cpu, bool stackChanged)
     fprintf(cpu->log_file, "\tREGISTER\n\t");
     for (int idx = 1; idx < REG_CAPACITY; idx++)
     {
-        fprintf(cpu->log_file, "[%g] ", cpu->Reg[idx]);
+        fprintf(cpu->log_file, "[%d] ", cpu->Reg[idx]);
     }
     
     fprintf(cpu->log_file, "\tRAM\n\t");
     for (int idx = 0; idx < 32; idx++)
     {
-        fprintf(cpu->log_file, "[%g] ", cpu->RAM[idx]);
+        fprintf(cpu->log_file, "[%d] ", cpu->RAM[idx]);
     }
 
     if (stackChanged)

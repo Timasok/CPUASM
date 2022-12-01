@@ -29,7 +29,7 @@
         do {                                                            \
             fprintf(stderr,"\e[0;31mERROR: " );                         \
             fprintf(stderr, __VA_ARGS__);                               \
-            fprintf(stderr,"\e[0m\n" );                                 \ 
+            fprintf(stderr,"\e[0m\n" );                                 \
         } while(0)
 
 
@@ -91,7 +91,7 @@
                 {                                                                   \
                     JUMP(cpuPtr);                                                   \
                     /*PRINT_ERR("Condition succeded\n");  */                        \
-                } else {                                                            \                                                            
+                } else {                                                            \
                     /*PRINT_ERR("Condition failed\n");      */                      \
                     cpuPtr->ip++;                                                   \
                 }                                                                   \
@@ -103,7 +103,7 @@
                 {                                                                                   \
                     break;                                                                          \
                 }                                                                                   \
-                stackPush(&cpuPtr->funcs_stack, cpu->ip);                                           \ 
+                stackPush(&cpuPtr->funcs_stack, cpu->ip);                                           \
                 cpuPtr->ip = cpuPtr->code[cpuPtr->ip];                                              \
                 /*fprintf(stderr, "CALL to ip = %d\n", cpu->ip); */                                 \
             } while (0)              
@@ -334,6 +334,9 @@ int process(CPU_info * cpu)
 
 int CPU_Dtor(CPU_info * cpu)
 {
+    stackDtor(&cpu->stack);
+    stackDtor(&cpu->funcs_stack);
+    
     fclose(cpu->log_file);
     free(cpu->code);
     return EXIT_SUCCESS;

@@ -7,7 +7,7 @@
 #include <sys/stat.h>
 #include <string>
 
-// #include "funcs_CPU.h"
+#include "funcs_CPU.h"
 #include "debug_CPU.h"
 
 #ifdef DEBUG_MODE
@@ -32,15 +32,14 @@ int main(int argc, const char* argv[])
         asm_source = fopen("b.code", "rb");
     }
 
-    printf("asm_source %p\n", asm_source);
+    // printf("asm_source %p\n", asm_source);
 
     CPU_info cpu;
     CPU_Ctor(&cpu, asm_source);
-    dump_CPU(&cpu);
+    // dump_CPU(&cpu);
     DBG_OUT;
 
     process(&cpu);
-    // printStack(&cpu->stack);
 
     CPU_Dtor(&cpu);
     fcloseall();

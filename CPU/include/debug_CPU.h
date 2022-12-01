@@ -2,6 +2,7 @@
 #define DEBUG_H
 
 #include "funcs_CPU.h"
+#include "general_debug.h"
 
 enum CPU_Errors
 {

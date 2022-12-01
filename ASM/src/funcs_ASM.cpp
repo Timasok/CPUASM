@@ -17,16 +17,15 @@
                                                                                               \
         if (arg)                                                                              \
         {                                                                                     \
-            getArgs(output, arg_string);                                                      \
-            fprintf(asm_listing, "%04x\t%02x\t  %02x\t%s\n",                                  \
-                    output->ip - 2, num, output->code[output->ip - 1], input->lines[line]);   \
-            dumpCmd(output->asm_log, line, cmd, 1, arg);                                      \
-                                                                                              \
+            number_of_args = getArgs(output, arg_string);                                     \
+            printToListing(asm_listing, output, input->lines[line], number_of_args);          \
+            dumpCmd(output->asm_log, line, cmd, 1, number_of_args);                           \
+            number_of_args = 0;                                                               \
         }                                                                                     \
         else                                                                                  \
         {                                                                                     \
                                                                                               \
-            fprintf(asm_listing, "%04x\t%02x  \t\t%s\n", output->ip - 1,                      \
+            fprintf(asm_listing, "%04x\t%02x  \t\t\t\t%s\n", output->ip - 1,                      \
                     output->code[output->ip - 1], input->lines[line]);                        \
             dumpCmd(output->asm_log, line, cmd, 0, arg);                                      \
         }                                                                                     \
@@ -50,7 +49,9 @@ int compile(Text_info *input, Asm_info *output)
     FILE *asm_listing = fopen("./logs/source.lst", "w+");
     fflush(asm_listing);
 
-    fprintf(asm_listing, "adr \tcmd   arg \tsource\n");
+    int number_of_args = 0;
+
+    fprintf(asm_listing, "adr \tcmd   arg   arg2 \tsource\n");
         int line = 0;
     do
     {
@@ -180,18 +181,22 @@ labelfound:
     case num:                                 \
         asmcode break;
 
+//returns number_of_args
 int getArgs(Asm_info *output, char *arg_string)
 {
     ASSERT_OK(output);
 
 #ifdef USING_INT
-    int argument = 0;
 #elif defined USING_DOUBLE
     double argument = 0;    
 #endif
 
     bool isMemory = false;
     bool isRegister = false;
+    
+    int argument = 0;
+    int second_argument = 0;
+    
     char label_name[64] = {};
     int num_of_comand = output->code[output->ip - 1];
 
@@ -213,15 +218,22 @@ int getArgs(Asm_info *output, char *arg_string)
         
     }
 
-#ifdef USING_INT
-#elif defined USING_DOUBLE
-    printf("comand_name_transfer = %g, result = %g\n", comand_name_transfer, output->code[output->ip - 1]);
-#endif
-
     ASSERT_OK(output);
-    return EXIT_SUCCESS;
+
+    if (output->code[output->ip - 1] == num_of_comand)
+    {
+        return 0;
+    
+    } else if (second_argument == 0)
+    {
+        return 1;
+
+    } else
+    {
+        return 2;
+    }
 }
 
 #undef GET_REG
 #undef DEF_CMD
-#undef ASSERT_OK
+#undef ASSERT_OK 

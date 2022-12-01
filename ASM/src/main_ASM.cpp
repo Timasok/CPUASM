@@ -25,7 +25,7 @@ int main(int argc, char ** argv)
     Asm_info executable = {};
     DBG_OUT;
     asmCtor(&executable, asm_name, 2 * (source.number_of_lines + 1));
-    DBG_OUT;
+    DBG_OUT_STDERR;
     // assert(executable.asm_log != NULL);
     compile(&source, &executable);
     if (executable.compile_once == 0)
@@ -34,16 +34,16 @@ int main(int argc, char ** argv)
         compile(&source, &executable);        
     }
 
-    DBG_OUT;
+    DBG_OUT_STDERR;
     for (int counter = 0; counter < executable.ip; counter++)
         fprintf(executable.asm_log, "%d\t", executable.code[counter]);
-    DBG_OUT;
+
     writeAssemblerInFile(&executable, txt_reserve);
-    DBG_OUT;
+
     asmDtor(&executable);
-    DBG_OUT;
-
+    textDtor(&source);
+    
     closeAsmLogs();
-
+    
     return EXIT_SUCCESS;
 }
