@@ -190,6 +190,7 @@ DEF_CMD(OUT, 7, 0 , {},
 {
     elem_t tmp;
     SINGLE_POP(cpu, &tmp);
+    tmp /= 1000;
     OUT(cpu, tmp);
 
 })
@@ -417,9 +418,9 @@ DEF_CMD(JNE, 17 , 1,
 DEF_CMD(IN, 18, 0,  {}, 
 { 
     printf("\e[0;32mENTER VALUE: \e[0m");
-    // double tmp;
-    // scanf("%lf", &tmp);
-    // SINGLE_PUSH(cpu, (int)(tmp*1000));
+    double tmp;
+    scanf("%lf", &tmp);
+    SINGLE_PUSH(cpu, (int)(tmp*1000));
 })  
 
 DEF_CMD(SHOW, 19, 0, {}, 
@@ -438,4 +439,25 @@ DEF_CMD(SHOW, 19, 0, {},
 DEF_CMD(DMP, 20 , 0,  {}, 
 { 
     DUMP();
+})
+
+//write 
+DEF_CMD(GRAPH, 21, 1, 
+{
+    sscanf(arg_string, " %d", &argument);
+    output->code[output->ip++] = argument;
+
+}, 
+{
+    GRAPH(cpu);
+})
+
+DEF_CMD(MAKE_CIRCLE, 22, 1, 
+{
+    sscanf(arg_string, " %d", &argument);
+    output->code[output->ip++] = argument;
+
+}, 
+{
+    MAKE_CIRCLE(cpu);
 })

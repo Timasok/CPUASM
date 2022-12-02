@@ -16,20 +16,28 @@ const int MASK_REMOVER = 0x1F;
 #define DEF_CMD(name, num, arg, ...) \
             CMD_##name = num,
 
+struct Window_size
+{
+    int height = 31;
+    int width  = 40;
+};
+
 struct CPU_info
 {
 
     FILE * log_file;
     Stack stack;
     Stack funcs_stack;
+    Window_size win_size;
+
     unsigned int code_of_error;
     int signature;
     int number_of_comands;
     int ip;
     int quantity;
-    elem_t * code;
-    elem_t Reg[REG_CAPACITY] = {};
-    elem_t RAM[RAM_CAPACITY] = {};
+    int * code;
+    int Reg[REG_CAPACITY] = {};
+    int RAM[RAM_CAPACITY] = {};
 
 };
 
@@ -59,7 +67,9 @@ int CPU_Ctor(CPU_info * cpu, FILE * asm_source);
 
 int checkPushPopForError(CPU_info *cpu, Stage stage);
 
-int operateArgs(CPU_info *cpu, elem_t *arg);
+int draw(CPU_info *cpu, int first_graph_index);
+
+int operateArgs(CPU_info *cpu, int *arg);
 int process(CPU_info * cpu);
 int CPU_Dtor(CPU_info * cpu);
 

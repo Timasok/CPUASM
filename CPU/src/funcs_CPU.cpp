@@ -70,8 +70,8 @@
 
 #define OUT(cpuPtr, element)                                                       \
                     do {                                                           \
-                        fprintf(cpuPtr->log_file, "OUT: = %d", element);           \
-                        printf("\e[0;32m\nOUT: = %d\e[0m\n", element);             \
+                        fprintf(cpuPtr->log_file, "OUT: = %g", element);           \
+                        printf("\e[0;32m\nOUT: = %g\e[0m\n", element);             \
                     } while (0)
 
 #define ARITHM_DBG(operation)                                                       \
@@ -118,11 +118,32 @@
                                                                                     \
             } while (0)   
 
+#define GRAPH(cpuPtr)                                                               \
+        do {                                                                        \
+                first_graph_index = cpuPtr->code[cpuPtr->ip++];                     \
+                                                                                    \
+                if (first_graph_index < 0 || first_graph_index > RAM_CAPACITY)      \
+                {                                                                   \
+                    printf("GRAPH_ARG_OVERFLOW!\n");                                \
+                    return -1;                                                      \
+                }                                                                   \
+                draw(cpuPtr, first_graph_index);                                    \
+            } while (0)                                                             \
+
+#define MAKE_CIRCLE(cpuPtr)                                                         \
+        do {                                                                        \
+                int radius = cpuPtr->code[cpuPtr->ip++];                            \
+                int center = first_graph_index                                      \
+                    + cpuPtr->win_size.width*((cpuPtr->win_size.height)/2 + 1);     \
+                                                                                    \
+                cpuPtr->RAM[center] = 1;                                            \
+            } while (0)                                                             \
 
 #define DUMP()                                                                     \
-        do{                                                                        \
+        do {                                                                       \
                 PRINT_ERR("ENABLE TO CALCULATE FACTORIAL");                        \
-            }while(0)
+                                                                                   \
+            } while(0)                                                             \
 
 
 bool checkSignature(CPU_info * cpu, FILE * asm_source)
@@ -181,9 +202,47 @@ int CPU_Ctor(CPU_info * cpu, FILE * asm_source)
 #define DEF_CMD(name, num, arg, asmcode, cpucode)                            \
     case num:                                                                \
             cpucode                                                          \
-            break;
+            break;                                                           \
 
-int operateArgs(CPU_info *cpu, elem_t *argPtr)
+int draw(CPU_info *cpu, int first_graph_index)
+{   
+    int counter = first_graph_index;
+
+    for (int y = 1; y < cpu->win_size.height; y++)
+    {
+        for (int x = 1; x < cpu->win_size.width; x++)
+        {
+            counter++;
+
+            if (counter == RAM_CAPACITY - 1)
+            {
+                break;
+            }
+
+            if (cpu->RAM[counter] != 0)
+            {
+                printf("■ ");
+
+            }else if (cpu->RAM[counter] == 0)
+            {
+                printf("□ ");
+            }
+
+        }
+        printf("\n");
+
+        if (counter == RAM_CAPACITY-1)
+        {
+            break;
+        }
+    }
+
+    printf("\n");
+
+    return 0;
+}
+
+int operateArgs(CPU_info *cpu, int *argPtr)
 {
     int reg_idx = INDEX_POISON;
     int ram_idx = INDEX_POISON;
@@ -235,8 +294,9 @@ int operateArgs(CPU_info *cpu, elem_t *argPtr)
 
     }else if((num_of_comand & MASK_REMOVER) == CMD_POP)
     {
-        stackPop(&cpu->stack, argPtr);
-
+        elem_t result = 0;
+        stackPop(&cpu->stack, &result);
+        *argPtr = result;
     }
 
     return EXIT_SUCCESS;
@@ -337,7 +397,8 @@ int process(CPU_info * cpu)
     {
         int num_of_comand = cpu->code[cpu->ip];
         elem_t first_popped = 0, second_popped = 0;
-        elem_t actual_arg;
+        int actual_arg;
+        int first_graph_index = 0;
 
         // fprintf(stderr,"NUMBER OF PROCESSING COMAND %d ip - %d \n", num_of_comand, cpu->ip);
 

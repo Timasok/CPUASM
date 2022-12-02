@@ -6,15 +6,17 @@ typedef unsigned long long canary_t;
 
 #include "cpu_control.h"
 
-#ifdef USING_INT
-    typedef int elem_t;
-#elif defined USING_DOUBLE
+// #ifdef USING_INT
+//     typedef int elem_t;
+// #elif defined USING_DOUBLE
     typedef double elem_t;
-#endif
+// #endif
 
 // extern FILE * stderr = fopen("../../stderr.txt","w");
 
-const elem_t POISON = 0xFFFFFFFF;
+// const elem_t POISON = 0xFFFFFFFF;
+
+const elem_t POISON = 47.228;
 
 enum Stack_Error 
 {
